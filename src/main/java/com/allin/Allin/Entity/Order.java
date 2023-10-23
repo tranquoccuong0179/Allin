@@ -32,6 +32,9 @@ public class Order {
     User user;
 
     @OneToMany(mappedBy = "order")
-    private List<OrderDetail> orderDetails;
+    List<OrderDetail> orderDetails;
+
+    @OneToMany(mappedBy = "order")
+    List<PaymentMethod> paymentMethods;
 
 }

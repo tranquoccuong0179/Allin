@@ -21,4 +21,7 @@ public class PaymentMethod {
     @Column(name = "method_name")
     String methodName;
 
+    @ManyToOne
+    @JoinColumn(name = "order_id")
+    Order order;
 }
