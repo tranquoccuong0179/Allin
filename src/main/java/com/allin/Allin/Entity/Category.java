@@ -23,7 +23,7 @@ public class Category {
 
     // CascadeType.ALL để thực hiện các thao tác CRUD liên quan đến Product khi thực hiện CRUD trên Category
     // orphanRemoval = true để xóa Product liên quan khi Category bị xóa
-    @OneToOne(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(mappedBy = "category", cascade = CascadeType.ALL)
     Product product;
 
 }

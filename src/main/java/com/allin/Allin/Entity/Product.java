@@ -1,5 +1,6 @@
 package com.allin.Allin.Entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -33,16 +34,19 @@ public class Product {
     String productName;
 
     @OneToOne
-    @JoinColumn(name = "category_id")
+    @JoinColumn(name = "category_id", referencedColumnName = "category_id")
     Category category;
 
     @OneToMany(mappedBy = "product")
+    @JsonManagedReference
     List<Feedback> feedbacks;
 
-    @ManyToMany(mappedBy = "products")
-    private List<Cart> carts;
+    @OneToMany(mappedBy = "product")
+    @JsonManagedReference
+    private List<CartDetail> cartDetails;
 
     @OneToMany(mappedBy = "product")
+    @JsonManagedReference
     private List<OrderDetail> orderDetails;
 
 }

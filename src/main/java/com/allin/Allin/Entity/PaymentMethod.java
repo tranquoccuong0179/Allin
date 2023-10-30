@@ -1,10 +1,14 @@
 package com.allin.Allin.Entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -21,7 +25,7 @@ public class PaymentMethod {
     @Column(name = "method_name")
     String methodName;
 
-    @ManyToOne
-    @JoinColumn(name = "order_id")
-    Order order;
+    @OneToMany(mappedBy = "paymentMethod")
+    @JsonManagedReference
+    List<Order> orders;
 }

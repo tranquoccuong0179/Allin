@@ -1,5 +1,6 @@
 package com.allin.Allin.Entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,7 +15,7 @@ import java.util.List;
 @Getter
 @Setter
 @Table(name = "tbl_cart")
-public class Cart {
+public class CartDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "card_id")
@@ -27,14 +28,11 @@ public class Cart {
     int cartQuantity;
 
     @OneToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", referencedColumnName = "user_id")
     User user;
 
-    @ManyToMany
-    @JoinTable(
-            name = "cart_product",
-            joinColumns = @JoinColumn(name = "cart_id"),
-            inverseJoinColumns = @JoinColumn(name = "product_id")
-    )
-    List<Product> products;
+    @ManyToOne
+    @JoinColumn( name = "product_id",  referencedColumnName = "product_id")
+    @JsonBackReference
+    Product product;
 }

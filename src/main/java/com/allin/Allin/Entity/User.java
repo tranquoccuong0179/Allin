@@ -1,5 +1,6 @@
 package com.allin.Allin.Entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -40,15 +41,18 @@ public class User {
 
     // CascadeType.ALL để thực hiện các thao tác CRUD liên quan đến ShippingAddress khi thực hiện CRUD trên User
     // Nếu muốn tạo ShippingAddress mà không yêu cầu User, bạn có thể sử dụng CascadeType.MERGE thay vì CascadeType.ALL
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user")
+    @JsonManagedReference
     List<ShippingAddress> shippingAddresses;
 
-    @OneToOne(mappedBy = "user")
-    Cart cart;
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    CartDetail cartDetail;
 
     @OneToMany(mappedBy = "user")
+    @JsonManagedReference
     List<Feedback> feedbacks;
 
     @OneToMany(mappedBy = "user")
+    @JsonManagedReference
     List<Order> orders;
 }

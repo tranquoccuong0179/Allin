@@ -1,5 +1,8 @@
 package com.allin.Allin.Entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -28,13 +31,17 @@ public class Order {
     BigDecimal orderTotalPrice;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", referencedColumnName = "user_id")
+    @JsonBackReference
     User user;
 
     @OneToMany(mappedBy = "order")
+    @JsonManagedReference
     List<OrderDetail> orderDetails;
 
-    @OneToMany(mappedBy = "order")
-    List<PaymentMethod> paymentMethods;
+    @ManyToOne
+    @JoinColumn(name = "payment_method_id", referencedColumnName = "payment_method_id")
+    @JsonBackReference
+    PaymentMethod paymentMethod;
 
 }
