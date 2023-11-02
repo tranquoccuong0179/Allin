@@ -46,7 +46,7 @@ public class User {
     List<ShippingAddress> shippingAddresses;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-    CartDetail cartDetail;
+    Cart cartDetail;
 
     @OneToMany(mappedBy = "user")
     @JsonManagedReference

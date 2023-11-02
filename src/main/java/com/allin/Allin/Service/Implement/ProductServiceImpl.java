@@ -42,7 +42,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ResponseEntity<ResponseObj> getAllProduct() {
-        List<Product> productList = productRepository.findAll();
+        List<Product> productList = productRepository.findByProductQuantityGreaterThan(0);
         if (productList.isEmpty())
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseObj.builder()
                     .message("null object")

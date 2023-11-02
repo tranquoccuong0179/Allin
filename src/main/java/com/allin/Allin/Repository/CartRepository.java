@@ -1,7 +1,10 @@
 package com.allin.Allin.Repository;
 
-import com.allin.Allin.Entity.CartDetail;
+import com.allin.Allin.Entity.Cart;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface CartRepository extends JpaRepository<CartDetail, Long> {
+import java.util.List;
+
+public interface CartRepository extends JpaRepository<Cart, Long> {
+    List<Cart> findByCartQuantityGreaterThan(int quantity);
 }

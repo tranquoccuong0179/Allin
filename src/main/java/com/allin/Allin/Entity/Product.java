@@ -1,5 +1,6 @@
 package com.allin.Allin.Entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -33,8 +34,9 @@ public class Product {
     @Column(name = "product_name")
     String productName;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "category_id", referencedColumnName = "category_id")
+    @JsonBackReference
     Category category;
 
     @OneToMany(mappedBy = "product")
@@ -43,7 +45,7 @@ public class Product {
 
     @OneToMany(mappedBy = "product")
     @JsonManagedReference
-    private List<CartDetail> cartDetails;
+    private List<Cart> cartDetails;
 
     @OneToMany(mappedBy = "product")
     @JsonManagedReference

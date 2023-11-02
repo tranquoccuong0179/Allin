@@ -1,10 +1,13 @@
 package com.allin.Allin.Entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -23,7 +26,8 @@ public class Category {
 
     // CascadeType.ALL để thực hiện các thao tác CRUD liên quan đến Product khi thực hiện CRUD trên Category
     // orphanRemoval = true để xóa Product liên quan khi Category bị xóa
-    @OneToOne(mappedBy = "category", cascade = CascadeType.ALL)
-    Product product;
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    List<Product> product;
 
 }

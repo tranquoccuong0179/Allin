@@ -39,7 +39,7 @@ public class ProductController {
     }
 
     //Update cần có id và 1 object
-    @PatchMapping("updateProduct/{id}")
+    @PatchMapping("/updateProduct/{id}")
     public ResponseEntity<ResponseObj> updateProduct(@PathVariable Long id, @RequestBody CreateProductRequest createProductRequest){
         return productService.updateProduct(id, createProductRequest);
     }
