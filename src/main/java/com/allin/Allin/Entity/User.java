@@ -2,30 +2,34 @@ package com.allin.Allin.Entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Collection;
 import java.util.List;
 
 @Entity
-@Getter
-@Setter
+@Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "tbl_user")
-public class User {
+public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     Long userId;
 
-    @Column(name = "user_name")
-    String userName;
+    @Column(name = "user_firstname")
+    String firstname;
+
+    @Column(name = "user_lastname")
+    String lastname;
 
     @Column(name = "user_password")
-    String password;
+    String password ;
 
     @Column(name = "user_email")
     String email;
@@ -33,8 +37,8 @@ public class User {
     @Column(name = "user_phone")
     String phone;
 
-    @Column(name = "user_role")
-    String role;
+    @Enumerated(EnumType.STRING)
+    Role role;
 
     @Column(name = "user_status")
     Boolean status;
@@ -55,4 +59,39 @@ public class User {
     @OneToMany(mappedBy = "user")
     @JsonManagedReference
     List<Order> orders;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(Role.USER.name()));
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
+    }
 }

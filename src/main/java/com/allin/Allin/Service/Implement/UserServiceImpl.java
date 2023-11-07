@@ -62,7 +62,8 @@ public class UserServiceImpl implements UserService {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         else {
 
-            userCurrent.setUserName(userUpdate.getUserName());
+            userCurrent.setFirstname(userUpdate.getFirstname());
+            userCurrent.setLastname(userUpdate.getLastname());
             userCurrent.setPassword(userUpdate.getPassword());
             userCurrent.setPhone(userUpdate.getPhone());
             userCurrent.setEmail(userUpdate.getEmail());
