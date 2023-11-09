@@ -6,6 +6,8 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -16,9 +18,10 @@ import java.util.Map;
 import java.util.function.Function;
 
 @Service
+@NoArgsConstructor(force = true)
 public class JwtServiceImpl implements JwtService {
-
-    private static final String SECRET_KEY = "F92BF449B4E4AB1CD8BA8AC1B634D123FQACA132352522342342323545";
+    @Value("${JWT_SECRET_KEY}")
+    private final String SECRET ;
 
     @Override
     public String extractUserName(String jwt) {
@@ -40,7 +43,7 @@ public class JwtServiceImpl implements JwtService {
     }
 
     private Key getSignInKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
+        byte[] keyBytes = Decoders.BASE64.decode(SECRET);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
