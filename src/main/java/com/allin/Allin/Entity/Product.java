@@ -16,7 +16,7 @@ import java.util.List;
 @Getter
 @Setter
 @Table(name = "tbl_product")
-public class Product {
+public class    Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "product_id")

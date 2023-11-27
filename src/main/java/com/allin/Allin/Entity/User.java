@@ -1,5 +1,7 @@
 package com.allin.Allin.Entity;
 
+import com.allin.Allin.Entity.Enum.Role;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
@@ -40,6 +42,12 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     Role role;
 
+
+    @OneToMany(mappedBy = "user")
+    @JsonManagedReference
+    @JsonIgnore
+    private List<Token> tokens;
+
     @Column(name = "user_status")
     Boolean status;
 
@@ -62,7 +70,7 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(Role.USER.name()));
+        return role.getAuthorities();
     }
 
     @Override

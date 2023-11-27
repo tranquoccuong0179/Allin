@@ -1,6 +1,7 @@
 package com.allin.Allin.Controller;
 
 import com.allin.Allin.Service.AuthenticationService;
+import com.allin.Allin.Service.Implement.LogoutServiceImpl;
 import com.allin.Allin.dto.Request.RegisterRequest;
 import com.allin.Allin.dto.Request.authenticationRequest;
 import com.allin.Allin.dto.Response.AuthenticationResponse;
@@ -16,16 +17,21 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AuthenticationController {
     private final AuthenticationService authenticationService;
-@PostMapping("/register")
+    private final LogoutServiceImpl logoutService;
+
+    @PostMapping("/register")
     public ResponseEntity<AuthenticationResponse> Register(
             @RequestBody RegisterRequest request
-    ){
+    ) {
         return ResponseEntity.ok(authenticationService.register(request));
     }
+
     @PostMapping("/authenticate")
     public ResponseEntity<AuthenticationResponse> Register(
             @RequestBody authenticationRequest request
-    ){
+    ) {
         return ResponseEntity.ok(authenticationService.authenticate(request));
     }
+
+
 }
