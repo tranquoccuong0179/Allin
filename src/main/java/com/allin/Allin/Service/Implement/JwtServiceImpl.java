@@ -20,8 +20,12 @@ import java.util.function.Function;
 @Service
 @NoArgsConstructor(force = true)
 public class JwtServiceImpl implements JwtService {
-    @Value("${JWT_SECRET_KEY}")
+    @Value("${application.security.jwt.secret-key}")
     private final String SECRET ;
+    @Value("${application.security.jwt.expiration}")
+    private long jwtExpiration;
+    @Value("${application.security.jwt.refresh-token.expiration}")
+    private long refreshExpiration;
 
     @Override
     public String extractUserName(String jwt) {
@@ -55,15 +59,27 @@ public class JwtServiceImpl implements JwtService {
             Map<String, Object> extractClaims,
             UserDetails userDetails
     ) {
+        return buildToke(extractClaims, userDetails, jwtExpiration);
+
+    }
+    public String generateRefreshToken(
+
+            UserDetails userDetails
+    ) {
+        return buildToke(new HashMap<>(), userDetails, refreshExpiration);
+
+    }
+    private String buildToke(Map<String, Object> extractClaims,
+                             UserDetails userDetails,
+                             Long expiration){
         return Jwts
                 .builder()
                 .setClaims(extractClaims)
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24))
+                .setExpiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
-
     }
 
     public boolean isTokenValid(String token, UserDetails userDetails) {

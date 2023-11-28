@@ -5,7 +5,11 @@ import org.springframework.stereotype.Service;
 
 
 public interface JwtService {
-     String extractUserName(String jwt);
-     boolean isTokenValid(String token, UserDetails userDetails);
-      String generateToken(UserDetails userDetails);
+    String extractUserName(String jwt);
+
+    boolean isTokenValid(String token, UserDetails userDetails);
+
+    String generateToken(UserDetails userDetails);
+
+    String generateRefreshToken(UserDetails userDetails);
 }

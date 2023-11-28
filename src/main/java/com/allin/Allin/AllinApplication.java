@@ -1,13 +1,11 @@
 package com.allin.Allin;
 
-import com.allin.Allin.Entity.Enum.Role;
 import com.allin.Allin.Service.AuthenticationService;
 import com.allin.Allin.dto.Request.RegisterRequest;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.security.authentication.AuthenticationManager;
 
 import static com.allin.Allin.Entity.Enum.Role.ADMIN;
 import static com.allin.Allin.Entity.Enum.Role.MANAGER;
@@ -31,7 +29,7 @@ public class AllinApplication {
 					.password("12345")
 					.role(ADMIN)
 					.build();
-			System.out.println("Admintoken: " + service.register(admin).getToken());
+			System.out.println("Admintoken: " + service.register(admin).getAccessToken());
 
 			var manager = RegisterRequest.builder()
 					.firstname("Admin")
@@ -40,7 +38,7 @@ public class AllinApplication {
 					.password("123457")
 					.role(MANAGER)
 					.build();
-			System.out.println("Managertoken: " + service.register(manager).getToken());
+			System.out.println("Managertoken: " + service.register(manager).getAccessToken());
 		};
 	}
 }

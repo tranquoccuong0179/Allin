@@ -1,6 +1,5 @@
 package com.allin.Allin.Service.Implement;
 
-import com.allin.Allin.Entity.Enum.Role;
 import com.allin.Allin.Entity.Enum.TokenType;
 import com.allin.Allin.Entity.Token;
 import com.allin.Allin.Entity.User;
@@ -11,11 +10,20 @@ import com.allin.Allin.Service.JwtService;
 import com.allin.Allin.dto.Request.RegisterRequest;
 import com.allin.Allin.dto.Request.authenticationRequest;
 import com.allin.Allin.dto.Response.AuthenticationResponse;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Service;
+
+import java.io.IOException;
 
 @Service
 @RequiredArgsConstructor
@@ -38,10 +46,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .build();
        var savedUser = repository.save(user);
         var jwtToken = jwtService.generateToken(user);
+        var refreshToken = jwtService.generateRefreshToken(user);
         saveUserToken(savedUser, jwtToken);
 
         return AuthenticationResponse.builder()
-                .token(jwtToken)
+                .accessToken(jwtToken)
+                .refreshToken(refreshToken)
                 .build();
     }
 
@@ -78,11 +88,40 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         var user = repository.findByEmail(request.getEmail())
                 .orElseThrow();
         var jwtToken = jwtService.generateToken(user);
+        var refreshToken = jwtService.generateRefreshToken(user);
         revokeAllUserTokens(user);
         saveUserToken(user, jwtToken);
         return AuthenticationResponse.builder()
-                .token(jwtToken)
+                .accessToken(jwtToken)
+                .refreshToken(refreshToken)
                 .build();
 
+    }
+
+    @Override
+    public void refreshToken(HttpServletRequest request,
+                             HttpServletResponse response) throws IOException {
+        final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+        final String userEmail;
+        final String refreshToken;
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+
+            return;
+        }
+        refreshToken = authHeader.substring(7);
+        userEmail = jwtService.extractUserName(refreshToken);
+        if (userEmail != null ){
+            var userDetails = this.repository.findByEmail(userEmail).orElseThrow();
+            if (jwtService.isTokenValid(refreshToken, userDetails)) {
+                var accToken = jwtService.generateToken(userDetails);
+                revokeAllUserTokens(userDetails);
+                saveUserToken(userDetails, accToken);
+                var authResponse = AuthenticationResponse.builder()
+                        .accessToken(accToken)
+                        .refreshToken(refreshToken)
+                        .build();
+                new ObjectMapper().writeValue(response.getOutputStream(), authResponse);
+            }
+        }
     }
 }
