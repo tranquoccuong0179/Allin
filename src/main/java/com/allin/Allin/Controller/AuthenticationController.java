@@ -25,14 +25,14 @@ public class AuthenticationController {
     private final LogoutServiceImpl logoutService;
 
     @PostMapping("/register")
-    public ResponseEntity<AuthenticationResponse> Register(
+    public ResponseEntity<AuthenticationResponse> register(
             @RequestBody RegisterRequest request
     ) {
         return ResponseEntity.ok(authenticationService.register(request));
     }
 
     @PostMapping("/authenticate")
-    public ResponseEntity<AuthenticationResponse> Register(
+    public ResponseEntity<AuthenticationResponse> authenticate(
             @RequestBody authenticationRequest request
     ) {
         return ResponseEntity.ok(authenticationService.authenticate(request));

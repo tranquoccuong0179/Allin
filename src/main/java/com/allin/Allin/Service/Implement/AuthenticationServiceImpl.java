@@ -15,20 +15,19 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class AuthenticationServiceImpl implements AuthenticationService {
-    private final UserRepository repository;
+    private final UserRepository userRepository;
     private final TokenRepository tokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
@@ -36,7 +35,21 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public AuthenticationResponse register(RegisterRequest request) {
-        var user = User.builder()
+        String requestEmail = request.getEmail();
+        List<User> userList = userRepository.findAllByStatusIsTrue();
+
+        for (User user : userList) {
+            if (user.getEmail().equals(requestEmail)) {
+                // Email already exists, return an error response
+                return AuthenticationResponse.builder()
+                        .status("Error")
+                        .message("Email already exists")
+                        .build();
+            }
+        }
+
+        // If the loop completes without finding a matching email, proceed with user registration
+        var newUser = User.builder()
                 .firstname(request.getFirstname())
                 .lastname(request.getLastname())
                 .email(request.getEmail())
@@ -44,17 +57,19 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .role(request.getRole())
                 .status(true)
                 .build();
-       var savedUser = repository.save(user);
-        var jwtToken = jwtService.generateToken(user);
-        var refreshToken = jwtService.generateRefreshToken(user);
+
+        var savedUser = userRepository.save(newUser);
+        var jwtToken = jwtService.generateToken(newUser);
+        var refreshToken = jwtService.generateRefreshToken(newUser);
         saveUserToken(savedUser, jwtToken);
 
         return AuthenticationResponse.builder()
+                .status("Success")
+                .message("User registered successfully")
                 .accessToken(jwtToken)
                 .refreshToken(refreshToken)
                 .build();
     }
-
     private void saveUserToken(User user, String jwtToken) {
         var token = Token.builder()
                 .user(user)
@@ -85,7 +100,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                         request.getPassword()
                 )
         );
-        var user = repository.findByEmail(request.getEmail())
+        var user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow();
         var jwtToken = jwtService.generateToken(user);
         var refreshToken = jwtService.generateRefreshToken(user);
@@ -111,7 +126,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         refreshToken = authHeader.substring(7);
         userEmail = jwtService.extractUserName(refreshToken);
         if (userEmail != null ){
-            var userDetails = this.repository.findByEmail(userEmail).orElseThrow();
+            var userDetails = this.userRepository.findByEmail(userEmail).orElseThrow();
             if (jwtService.isTokenValid(refreshToken, userDetails)) {
                 var accToken = jwtService.generateToken(userDetails);
                 revokeAllUserTokens(userDetails);

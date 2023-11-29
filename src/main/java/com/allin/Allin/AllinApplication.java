@@ -17,28 +17,28 @@ public class AllinApplication {
 		SpringApplication.run(AllinApplication.class, args);
 	}
 
-	@Bean
-	public CommandLineRunner commandLineRunner(
-			AuthenticationService service
-	) {
-		return args -> {
-			var admin = RegisterRequest.builder()
-					.firstname("Admin")
-					.lastname("Admin")
-					.email("admin@gmail.com")
-					.password("12345")
-					.role(ADMIN)
-					.build();
-			System.out.println("Admintoken: " + service.register(admin).getAccessToken());
-
-			var manager = RegisterRequest.builder()
-					.firstname("Admin")
-					.lastname("Admin")
-					.email("adnmi@gmail.com")
-					.password("123457")
-					.role(MANAGER)
-					.build();
-			System.out.println("Managertoken: " + service.register(manager).getAccessToken());
-		};
-	}
+//	@Bean
+//	public CommandLineRunner commandLineRunner(
+//			AuthenticationService service
+//	) {
+//		return args -> {
+//			var admin = RegisterRequest.builder()
+//					.firstname("Admin")
+//					.lastname("Admin")
+//					.email("admin@gmail.com")
+//					.password("12345")
+//					.role(ADMIN)
+//					.build();
+//			System.out.println("Admintoken: " + service.register(admin).getAccessToken());
+//
+//			var manager = RegisterRequest.builder()
+//					.firstname("Admin")
+//					.lastname("Admin")
+//					.email("adnmi@gmail.com")
+//					.password("123457")
+//					.role(MANAGER)
+//					.build();
+//			System.out.println("Managertoken: " + service.register(manager).getAccessToken());
+//		};
+//	}
 }
